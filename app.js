@@ -4,11 +4,11 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const app = express();
-const pool = require("./db/pool");
-const router = require("./routes/index");
+const router = require("./routes/indexRouter");
+const fileRouter = require("./routes/fileRouter");
 const flash = require("connect-flash");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const PrismaClient = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -17,21 +17,20 @@ app.use(express.urlencoded({ extended: false }));
 
 // initalise passport
 app.use(
-  expressSession({
-    cookie: {
-      maxAge: 60 * 60 * 1000 * 24, // 24 hours
-    },
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
+  session({
     store: new PrismaSessionStore(new PrismaClient(), {
-      checkPeriod: 2 * 60 * 1000, // 2 minutes
+      checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+    },
   }),
 );
-
 // initalise auth
 require("./config/passport");
 app.use(passport.initialize());
@@ -39,6 +38,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.use("/", router);
+app.use("/files", fileRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

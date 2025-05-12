@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <link href="stylesheets/sign-up.css" rel="stylesheet" />
+    <link href="stylesheets/partials/errors.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <h1>Sign Up</h1>
+    </header>
+    <main>
+      <%- include('partials/errors.ejs') %>
+      <form action="/signup" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+        <label for="confirmPassword">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirmPassword"
+          required
+        />
+        <button type="submit">Create Account</button>
+      </form>
+    </main>
+  </body>
+</html>

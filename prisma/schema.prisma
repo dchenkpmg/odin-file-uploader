@@ -30,7 +30,7 @@ model File {
   isFolder   Boolean
   user       User     @relation("FileUser", fields: [userId], references: [id])
   parentId   Int?
-  parent     File?    @relation("FileChildren", fields: [parentId], references: [id])
+  parent     File?    @relation("FileChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children   File[]   @relation("FileChildren")
 
   @@map("files")

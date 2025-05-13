@@ -9,7 +9,11 @@
   <body>
     <h1>This is the files placeholder!</h1>
     <p>Upload your files here.</p>
-    <form action="/files/upload" method="POST" enctype="multipart/form-data">
+    <form
+      action="/files/<%= fileId %>/upload"
+      method="POST"
+      enctype="multipart/form-data"
+    >
       <label for="file">Upload a file:</label>
       <input type="file" id="file" name="file" />
       <button type="submit">Upload</button>
@@ -18,16 +22,36 @@
       <button type="submit">Create Folder</button>
     </form>
     <h3>List of files</h3>
+    <% if (fileId !== "root") { %>
+    <a href="/files/<%= parentId %>">Back</a>
+    <% } %>
     <ul>
       <% files.forEach((file) => { %>
       <li>
-        <p><%= file.name %></p>
+        <% if (file.isFolder) { %>
+        <a href="/files/<%= file.id %>"><%= file.name %></a>
+        <% } else { %>
+        <span><%= file.name %></span>
+        <% } %>
         <form
-          action="/files/<%= fileId %>/update-folder/<%= file.id %>"
+          action="/files/<%= fileId %>/download/<%= file.id %>"
           method="POST"
         >
-          <button type="submit">Rename</button>
+          <button type="submit">Download</button>
         </form>
+        <dialog>
+          <button class="close-btn">Close</button>
+          <form
+            action="/files/<%= fileId %>/update-folder/<%= file.id %>"
+            method="POST"
+          >
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required />
+            <button type="submit">Save</button>
+          </form>
+        </dialog>
+        <button class="rename-btn">Edit</button>
+
         <form
           action="/files/<%= fileId %>/delete-folder/<%= file.id %>"
           method="POST"
@@ -38,4 +62,18 @@
       <% }); %>
     </ul>
   </body>
+  <script>
+    const renameBtns = document.querySelectorAll(".rename-btn");
+    const dialogs = document.querySelectorAll("dialog");
+
+    renameBtns.forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        dialogs[index].showModal();
+        const closeBtn = dialogs[index].querySelector(".close-btn");
+        closeBtn.addEventListener("click", () => {
+          dialogs[index].close();
+        });
+      });
+    });
+  </script>
 </html>

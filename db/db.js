@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient({});
 
 async function createUser(username, password) {
+  console.log(`Creating user: ${username}`);
   await prisma.user.create({
     data: {
       username: username,
@@ -11,6 +12,9 @@ async function createUser(username, password) {
 }
 
 async function createFolder(userId, parentId, folderName) {
+  console.log(
+    `Creating folder: ${folderName} for user: ${userId}, parentId: ${parentId}`,
+  );
   await prisma.file.create({
     data: {
       name: folderName,
@@ -22,10 +26,27 @@ async function createFolder(userId, parentId, folderName) {
   });
 }
 
-async function updateFolder(userId, parentId, childId, name) {
+async function updateFolder(userId, childId, name) {
+  console.log(
+    `Updating folder with ID: ${childId} for user: ${userId} and name: ${name}`,
+  );
   await prisma.file.update({
+    where: {
+      id: childId,
+      userId: userId,
+    },
     data: {
-      w,
+      name: name,
+    },
+  });
+}
+
+async function deleteFolder(userId, childId) {
+  console.log(`Deleting folder with ID: ${childId} for user: ${userId}`);
+  await prisma.file.delete({
+    where: {
+      id: childId,
+      userId: userId,
     },
   });
 }
@@ -36,12 +57,50 @@ async function getFiles(userId, parentId) {
       userId: userId,
       parentId: parentId,
     },
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
   });
   return files;
+}
+
+async function getParentId(userId, childId) {
+  const file = await prisma.file.findUnique({
+    where: {
+      id: childId,
+      userId: userId,
+    },
+    select: {
+      parentId: true,
+    },
+  });
+  return file?.parentId;
+}
+
+async function createFile(userId, parentId, fileName, fileSize, filePath) {
+  console.log(
+    `Creating file: ${fileName} for user: ${userId}, parentId: ${parentId}`,
+  );
+  await prisma.file.create({
+    data: {
+      name: fileName,
+      size: fileSize,
+      userId: userId,
+      url: filePath,
+      isFolder: false,
+      parentId: parentId === "root" ? null : parentId,
+    },
+  });
 }
 
 module.exports = {
   createUser,
   createFolder,
+  updateFolder,
+  deleteFolder,
   getFiles,
+  createFile,
+  getParentId,
 };

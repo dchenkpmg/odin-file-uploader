@@ -1,5 +1,6 @@
 const db = require("../db/db");
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
 async function getLoginPage(req, res) {
   const message = req.flash("error") || req.flash("success");
@@ -8,8 +9,6 @@ async function getLoginPage(req, res) {
     message: message,
   });
 }
-
-async function postLoginPage(req, res) {}
 
 async function getSignUp(req, res) {
   res.render("signup", {
@@ -37,7 +36,6 @@ async function postSignUp(req, res, next) {
 
 module.exports = {
   getLoginPage,
-  postLoginPage,
   getSignUp,
   postSignUp,
 };

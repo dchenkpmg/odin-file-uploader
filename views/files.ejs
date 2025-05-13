@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link href="styles/files.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>This is the files placeholder!</h1>
+    <p>Upload your files here.</p>
+    <form action="/files/upload" method="POST" enctype="multipart/form-data">
+      <label for="file">Upload a file:</label>
+      <input type="file" id="file" name="file" />
+      <button type="submit">Upload</button>
+    </form>
+    <form action="/files/<%= fileId %>/create-folder" method="POST">
+      <button type="submit">Create Folder</button>
+    </form>
+    <h3>List of files</h3>
+    <ul>
+      <% files.forEach((file) => { %>
+      <li>
+        <p><%= file.name %></p>
+        <form
+          action="/files/<%= fileId %>/update-folder/<%= file.id %>"
+          method="POST"
+        >
+          <button type="submit">Rename</button>
+        </form>
+        <form
+          action="/files/<%= fileId %>/delete-folder/<%= file.id %>"
+          method="POST"
+        >
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+      <% }); %>
+    </ul>
+  </body>
+</html>

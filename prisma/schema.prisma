@@ -23,10 +23,11 @@ model Session {
 model File {
   id         Int      @id @default(autoincrement())
   name       String
-  size       Int
+  size       Int?
   uploadedAt DateTime @default(now())
-  url        String
+  url        String?
   userId     Int
+  isFolder   Boolean
   user       User     @relation("FileUser", fields: [userId], references: [id])
   parentId   Int?
   parent     File?    @relation("FileChildren", fields: [parentId], references: [id])

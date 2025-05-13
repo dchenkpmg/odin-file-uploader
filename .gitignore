@@ -138,3 +138,6 @@ dist
 
 # prisma
 generated
+
+# test folder
+dev

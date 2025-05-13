@@ -66,17 +66,14 @@ async function getFiles(userId, parentId) {
   return files;
 }
 
-async function getParentId(userId, childId) {
+async function getFile(userId, childId) {
   const file = await prisma.file.findUnique({
     where: {
       id: childId,
       userId: userId,
     },
-    select: {
-      parentId: true,
-    },
   });
-  return file?.parentId;
+  return file;
 }
 
 async function createFile(userId, parentId, fileName, fileSize, filePath) {
@@ -101,6 +98,6 @@ module.exports = {
   updateFolder,
   deleteFolder,
   getFiles,
+  getFile,
   createFile,
-  getParentId,
 };

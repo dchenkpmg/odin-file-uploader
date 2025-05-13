@@ -18,6 +18,15 @@ router.post(
   }),
 );
 
+router.get("/log-out", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
 router.get("/signup", controller.getSignUp);
 router.post("/signup", signUpValidation, controller.postSignUp);
 

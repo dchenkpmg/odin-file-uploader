@@ -1,5 +1,12 @@
+require("dotenv").config();
 const db = require("../db/db");
+const { decode } = require("base64-arraybuffer");
 const { upload } = require("../middlewares/multer");
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY,
+);
 
 async function getFolder(req, res) {
   const files = await db.getFiles(
@@ -7,10 +14,11 @@ async function getFolder(req, res) {
     req.params.id === "root" ? null : parseInt(req.params.id),
   );
   if (req.params.id !== "root") {
-    const parentId = await db.getParentId(
+    const f = await db.getFile(
       req.user.id,
       req.params.id === "root" ? null : parseInt(req.params.id),
     );
+    const parentId = f.parentId;
     res.render("files", {
       user: req?.user,
       files: files,
@@ -29,11 +37,50 @@ async function getFolder(req, res) {
 
 async function uploadFile(req, res, next) {
   try {
+    const file = req.file;
+    if (!file) {
+      req.flash("error", "No file uploaded");
+      return res.redirect(`/files/${req.params.id}`);
+    }
+    const fileBase64 = decode(file.buffer.toString("base64"));
+
+    // same file check
+    const existingFiles = await db.getFiles(
+      req.user.id,
+      req.params.id === "root" ? null : parseInt(req.params.id),
+    );
+
+    const fileExists = existingFiles.some((existingFile) => {
+      const parentId =
+        req.params.id === "root" ? null : parseInt(req.params.id);
+      return (
+        existingFile.name === file.originalname &&
+        existingFile.parentId === parentId
+      );
+    });
+
+    if (fileExists) {
+      console.log("File already exists");
+      req.flash("error", "File already exists");
+      return res.redirect(`/files/${req.params.id}`);
+    }
+
+    const { data, error } = await supabase.storage
+      .from("odin-file-upload")
+      .upload(`${req.params.id}-${file.originalname}`, fileBase64, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+    if (error) {
+      console.error("Error uploading file to Supabase:", error);
+      req.flash("error", "Error uploading file");
+      return res.redirect(`/files/${req.params.id}`);
+    }
     const userId = req.user.id;
     const parentId = req.params.id || null;
     const fileName = req.file.originalname;
     const fileSize = req.file.size;
-    const filePath = req.file.path;
+    const filePath = data.path;
     await db.createFile(userId, parentId, fileName, fileSize, filePath);
     req.flash("success", "File uploaded successfully");
     res.redirect(`/files/${req.params.id}`);
@@ -41,6 +88,22 @@ async function uploadFile(req, res, next) {
     console.error("Error uploading file:", error);
     res.status(500).send("Error uploading file");
   }
+}
+
+async function downloadFile(req, res) {
+  const userId = req.user.id;
+  const childId = parseInt(req.params.child);
+  const f = await db.getFile(userId, childId);
+  const { data, error } = await supabase.storage
+    .from("odin-file-upload")
+    .download(f.url);
+  if (error) {
+    console.error("Error downloading file from Supabase:", error);
+    return res.status(500).send("Error downloading file");
+  }
+  res.setHeader("Content-Disposition", `attachment; filename=${f.name}`);
+  res.setHeader("Content-Type", "application/octet-stream");
+  res.send(data);
 }
 
 async function createFolder(req, res) {
@@ -67,6 +130,7 @@ async function deleteFolder(req, res) {
 module.exports = {
   getFolder,
   uploadFile,
+  downloadFile,
   createFolder,
   updateFolder,
   deleteFolder,

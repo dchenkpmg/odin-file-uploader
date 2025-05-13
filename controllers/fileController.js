@@ -65,12 +65,18 @@ async function uploadFile(req, res, next) {
       return res.redirect(`/files/${req.params.id}`);
     }
 
+    // Upload the file buffer directly
     const { data, error } = await supabase.storage
       .from("odin-file-upload")
-      .upload(`${req.params.id}-${file.originalname}`, fileBase64, {
-        cacheControl: "3600",
-        upsert: true,
-      });
+      .upload(
+        `${req.user.id}/${req.params.id}/${file.originalname}`,
+        file.buffer, // Use the buffer directly
+        {
+          cacheControl: "3600",
+          upsert: true,
+        },
+      );
+
     if (error) {
       console.error("Error uploading file to Supabase:", error);
       req.flash("error", "Error uploading file");
@@ -94,18 +100,24 @@ async function downloadFile(req, res) {
   const userId = req.user.id;
   const childId = parseInt(req.params.child);
   const f = await db.getFile(userId, childId);
+
+  console.log("File path:", f.url);
+
   const { data, error } = await supabase.storage
     .from("odin-file-upload")
     .download(f.url);
+
   if (error) {
     console.error("Error downloading file from Supabase:", error);
     return res.status(500).send("Error downloading file");
   }
-  res.setHeader("Content-Disposition", `attachment; filename=${f.name}`);
-  res.setHeader("Content-Type", "application/octet-stream");
-  res.send(data);
-}
+  const arrayBuffer = await data.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
+  res.setHeader("Content-Disposition", `attachment; filename=${f.name}`);
+  res.setHeader("Content-Type", data.type);
+  res.send(buffer);
+}
 async function createFolder(req, res) {
   const userId = req.user.id;
   const parentId = req.params.id || null;

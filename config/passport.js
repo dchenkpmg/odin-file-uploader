@@ -1,17 +1,18 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const pool = require("../db/pool");
 const bcrypt = require("bcryptjs");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient({});
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       console.log("Authenticating user:", username);
-      const { rows } = await pool.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username],
-      );
-      const user = rows[0];
+      const user = await prisma.user.findUnique({
+        where: {
+          username: username,
+        },
+      });
 
       if (!user) {
         console.log("User not found:", username);
@@ -37,10 +38,11 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (userId, done) => {
   console.log("Deserializing user:", userId);
   try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-      userId,
-    ]);
-    const user = rows[0];
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
     done(null, user);
   } catch (err) {
     done(err);

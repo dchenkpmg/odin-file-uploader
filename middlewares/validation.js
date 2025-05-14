@@ -7,7 +7,7 @@ const signUpValidation = [
     .withMessage("Username is required")
     .isLength({ min: 3, max: 20 })
     .withMessage(
-      "Username must be at least 3 characters long snd at most 20 characters long",
+      "Username must be at least 3 characters long and at most 20 characters long",
     ),
   body("password")
     .trim()

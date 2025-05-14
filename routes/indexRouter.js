@@ -1,8 +1,5 @@
 const { Router } = require("express");
-const {
-  signUpValidation,
-  loginValidation,
-} = require("../middlewares/validation");
+const { signUpValidation } = require("../middlewares/validation");
 const router = Router();
 const controller = require("../controllers/indexController");
 const passport = require("passport");
@@ -10,7 +7,6 @@ const passport = require("passport");
 router.get("/", controller.getLoginPage);
 router.post(
   "/",
-  loginValidation,
   passport.authenticate("local", {
     successRedirect: "/files/root",
     failureRedirect: "/",

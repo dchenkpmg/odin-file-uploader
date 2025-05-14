@@ -12,13 +12,23 @@
       <h1>File Storage</h1>
     </header>
     <main>
-      <%- include('partials/errors.ejs') %>
+      <%- include('partials/errors.ejs') %> <% if (errMessages &&
+      errMessages.length > 0) { %>
+      <div class="alert alert-danger">
+        <% errMessages.forEach(function(err) { %>
+        <p><%= err %></p>
+        <% }); %>
+      </div>
+      <% } %>
+
       <h2>Sign Up</h2>
       <form action="/signup" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required />
+
         <label for="confirmPassword">Confirm Password:</label>
         <input
           type="password"
@@ -26,7 +36,9 @@
           name="confirmPassword"
           required
         />
+
         <button type="submit">Create Account</button>
+
         <div class="cancel">
           <button type="button" class="cancel-button">
             <a href="/">Cancel</a>

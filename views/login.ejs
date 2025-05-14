@@ -12,15 +12,23 @@
       <h1><%= title %></h1>
     </header>
     <main>
-      <%- include('partials/errors.ejs') %> <% if (message.length > 0) { %>
-      <p><%= message[0] %></p>
+      <%- include('partials/errors.ejs') %> <% if (errMessages &&
+      errMessages.length > 0) { %>
+      <div class="alert alert-danger">
+        <% errMessages.forEach(function(err) { %>
+        <p><%= err %></p>
+        <% }); %>
+      </div>
       <% } %>
+
       <h2>Sign In</h2>
       <form action="/" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required />
+
         <button type="submit">Sign In</button>
       </form>
       <a href="/signup">Don't have an account? Sign Up</a>

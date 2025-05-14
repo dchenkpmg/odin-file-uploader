@@ -11,6 +11,16 @@ async function createUser(username, password) {
   });
 }
 
+async function getUserByUsername(username) {
+  console.log(`Getting user by username: ${username}`);
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+  return user;
+}
+
 async function createFolder(userId, parentId, folderName) {
   console.log(
     `Creating folder: ${folderName} for user: ${userId}, parentId: ${parentId}`,
@@ -94,6 +104,7 @@ async function createFile(userId, parentId, fileName, fileSize, filePath) {
 
 module.exports = {
   createUser,
+  getUserByUsername,
   createFolder,
   updateFolder,
   deleteFolder,

@@ -11,13 +11,23 @@ async function getLoginPage(req, res) {
   const message = errorMessage.length > 0 ? errorMessage : successMessage;
   res.render("login", {
     title: "File Storage",
-    message: message,
+    errMessages: message,
   });
 }
 
 async function getSignUp(req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/files/root");
+  }
+
+  const errorMessage = req.flash("error");
+  const successMessage = req.flash("success");
+
+  const message = errorMessage.length > 0 ? errorMessage : successMessage;
+  const errMessages = message.length > 0 ? message : [];
   res.render("signup", {
     title: "File Storage - Sign Up",
+    errMessages: errMessages,
   });
 }
 
@@ -29,6 +39,11 @@ async function postSignUp(req, res, next) {
         title: "Sign Up - File Storage",
         errors: errors.array(),
       });
+    }
+    const existingUser = await db.getUserByUsername(req.body.username);
+    if (existingUser) {
+      req.flash("error", "Username already exists");
+      return res.redirect("/signup");
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     await db.createUser(req.body.username, hashedPassword);

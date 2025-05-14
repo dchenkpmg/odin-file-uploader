@@ -3,118 +3,183 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title></title>
-    <link href="styles/files.css" rel="stylesheet" />
+    <title>File Storage</title>
+    <link href="/styles/files.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>This is the files placeholder!</h1>
-    <p>Upload your files here.</p>
-    <a href="/log-out">Logout</a>
-    <form
-      action="/files/<%= fileId %>/upload"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      <label for="file">Upload a file:</label>
-      <input type="file" id="file" name="file" />
-      <button type="submit">Upload</button>
-    </form>
-    <form action="/files/<%= fileId %>/create-folder" method="POST">
-      <button type="submit">Create Folder</button>
-    </form>
-    <h3>List of files</h3>
-    <% if (fileId !== "root") { %>
-    <a href="/files/<%= parentId %>">Back</a>
-    <% } %>
-    <ul>
-      <% files.forEach((file) => { %>
-      <li>
-        <% if (file.isFolder) { %>
-        <a href="/files/<%= file.id %>"><%= file.name %></a>
-        <% } else { %>
-        <span><%= file.name %></span>
-        <% } %>
-        <span class="file-size" data-size="<%= file.size %>"
-          ><%= file.size %></span
-        >
-        <span><%= file.uploadedAt.toLocaleString() %></span>
-        <form
-          action="/files/<%= fileId %>/download/<%= file.id %>"
-          method="POST"
-        >
-          <% if (!file.isFolder) { %>
-          <button type="submit">Download</button>
+    <header>
+      <a href="/files/root" class="logo">
+        <h1>File Storage</h1>
+      </a>
+      <nav>
+        <a href="/log-out" class="btn logout">Logout</a>
+      </nav>
+    </header>
+    <main>
+      <section class="upload">
+        <div class="back-button">
+          <% if (fileId !== "root") { %>
+          <a href="/files/<%= parentId %>" class="btn back">Back</a>
           <% } %>
-        </form>
-        <dialog>
-          <button class="close-btn">Close</button>
-          <form
-            action="/files/<%= fileId %>/update-folder/<%= file.id %>"
-            method="POST"
-          >
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required />
-            <button type="submit">Save</button>
+        </div>
+        <div class="options-btns">
+          <button class="btn upload-btn">Upload File</button>
+          <dialog class="modal-upload">
+            <form
+              action="/files/<%= fileId %>/upload"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <div class="upload-info">
+                <span>Maximum of 10MB upload</span>
+                <label for="file">Choose a file:</label>
+                <input type="file" id="file" name="file" />
+              </div>
+              <div class="actions">
+                <button type="submit" class="btn upload">Upload</button>
+                <button type="button" class="btn close-modal">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+          <form action="/files/<%= fileId %>/create-folder" method="POST">
+            <button type="submit" class="btn create-folder">
+              Create Folder
+            </button>
           </form>
-        </dialog>
-        <% if (file.isFolder) { %>
-        <button class="rename-btn">Edit</button>
-        <% } %>
-        <form
-          action="/files/<%= fileId %>/delete-folder/<%= file.id %>"
-          method="POST"
-        >
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-      <% }); %>
-    </ul>
-  </body>
-  <script>
-    const renameBtns = document.querySelectorAll(".rename-btn");
-    const dialogs = document.querySelectorAll("dialog");
+        </div>
+      </section>
+    </main>
+    <section class="file-list">
+      <table>
+        <thead>
+          <tr>
+            <th class="name">Name</th>
+            <th class="size">Size</th>
+            <th class="date">Created Date</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% files.forEach((file) => { %>
+          <tr>
+            <td class="name">
+              <% if (file.isFolder) { %>
+              <a href="/files/<%= file.id %>" class="link folder"
+                ><%= file.name %></a
+              >
+              <% } else { %>
+              <span class="name"><%= file.name %></span>
+              <% } %>
+            </td>
+            <% if (file.isFolder) { %>
+            <td class="size">
+              <span class="size"> - </span>
+            </td>
+            <% } else { %>
+            <td class="size">
+              <span class="size" data-size="<%= file.size %>"
+                ><%= file.size %></span
+              >
+            </td>
+            <% } %>
+            <td class="date">
+              <span class="date"><%= file.uploadedAt.toLocaleString() %></span>
+            </td>
+            <td class="actions actions-td">
+              <% if (!file.isFolder) { %>
+              <form
+                action="/files/<%= fileId %>/download/<%= file.id %>"
+                method="POST"
+                class="download"
+              >
+                <button type="submit" class="table-btn btn">Download</button>
+              </form>
+              <% } %> <% if (file.isFolder) { %>
+              <dialog class="modal-rename">
+                <div class="top-modal-edit">
+                  <button class="close-modal-edit btn">Close</button>
+                </div>
+                <form
+                  action="/files/<%= fileId %>/update-folder/<%= file.id %>"
+                  method="POST"
+                >
+                  <label for="name">Name:</label>
+                  <input type="text" id="name" name="name" required />
+                  <button type="submit">Save</button>
+                </form>
+              </dialog>
+              <button class="table-btn btn rename-btn">Edit</button>
+              <% } %>
+              <form
+                action="/files/<%= fileId %>/delete-folder/<%= file.id %>"
+                method="POST"
+                class="delete"
+              >
+                <button type="submit" class="table-btn btn">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </section>
+    <script>
+      const renameBtns = document.querySelectorAll(".rename-btn");
+      const dialogs = document.querySelectorAll(".modal-rename");
+      const uploadFile = document.querySelector(".modal-upload");
+      const uploadDialogBtn = document.querySelector(".upload-btn");
 
-    renameBtns.forEach((btn, index) => {
-      btn.addEventListener("click", () => {
-        dialogs[index].showModal();
-        const closeBtn = dialogs[index].querySelector(".close-btn");
-        closeBtn.addEventListener("click", () => {
-          dialogs[index].close();
+      uploadDialogBtn.addEventListener("click", () => {
+        uploadFile.showModal();
+      });
+
+      closeModal = document.querySelector(".close-modal");
+      closeModal.addEventListener("click", () => {
+        uploadFile.close();
+      });
+
+      renameBtns.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          dialogs[index].showModal();
+          const closeBtn = dialogs[index].querySelector(".close-modal-edit");
+          closeBtn.addEventListener("click", () => {
+            dialogs[index].close();
+          });
         });
       });
-    });
 
-    function humanFileSize(bytes, si = false, dp = 1) {
-      const thresh = si ? 1000 : 1024;
+      function humanFileSize(bytes, si = false, dp = 1) {
+        const thresh = si ? 1000 : 1024;
 
-      if (Math.abs(bytes) < thresh) {
-        return bytes + " B";
+        if (Math.abs(bytes) < thresh) {
+          return bytes + " B";
+        }
+
+        const units = si
+          ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+          : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+        let u = -1;
+        const r = 10 ** dp;
+
+        do {
+          bytes /= thresh;
+          ++u;
+        } while (
+          Math.round(Math.abs(bytes) * r) / r >= thresh &&
+          u < units.length - 1
+        );
+
+        return bytes.toFixed(dp) + " " + units[u];
       }
 
-      const units = si
-        ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-        : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-      let u = -1;
-      const r = 10 ** dp;
-
-      do {
-        bytes /= thresh;
-        ++u;
-      } while (
-        Math.round(Math.abs(bytes) * r) / r >= thresh &&
-        u < units.length - 1
-      );
-
-      return bytes.toFixed(dp) + " " + units[u];
-    }
-
-    const fileSizeElements = document.querySelectorAll(".file-size");
-    fileSizeElements.forEach((element) => {
-      const rawSize = element.getAttribute("data-size");
-      if (rawSize) {
-        const formattedSize = humanFileSize(parseInt(rawSize, 10));
-        element.textContent = formattedSize;
-      }
-    });
-  </script>
+      const fileSizeElements = document.querySelectorAll(".size");
+      fileSizeElements.forEach((element) => {
+        const rawSize = element.getAttribute("data-size");
+        if (rawSize) {
+          const formattedSize = humanFileSize(parseInt(rawSize, 10));
+          element.textContent = formattedSize;
+        }
+      });
+    </script>
+  </body>
 </html>

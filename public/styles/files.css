@@ -1,0 +1,284 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  box-sizing: border-box;
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  text-decoration: none;
+  color: #fff;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.upload {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-button {
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
+
+.options-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
+}
+
+.btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.table-btn {
+  width: 6rem;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.file-list {
+  margin: 2rem 1rem;
+  border-radius: 5px;
+}
+
+.file-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fff;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.upload-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.file .name,
+.file .size,
+.file .date {
+  margin-right: 20px;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.file-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.file-list-header .name,
+.file-list-header .size,
+.file-list-header .date {
+  margin-right: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+.actions-td {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+th.name,
+td.name {
+  width: 30rem;
+}
+
+th.size,
+td.size {
+  width: 20rem;
+}
+
+th.date,
+td.date {
+  width: 20rem;
+}
+
+th.actions,
+td.actions {
+  width: 25rem;
+}
+
+.top-modal-edit {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-rename {
+  width: 80%;
+  max-width: 500px;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  margin: auto;
+}
+
+.modal-rename form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-rename label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.modal-rename input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.modal-rename button[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.625rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.modal-rename button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.modal-upload {
+  width: 80%;
+  max-width: 500px;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  margin: auto;
+}
+
+.modal-upload .upload-info {
+  margin-bottom: 1rem;
+}
+
+.modal-upload label {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.modal-upload input[type="file"] {
+  margin-top: 0.5rem;
+}
+
+.modal-upload .actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.modal-upload .btn.upload {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.625rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.modal-upload .btn.upload:hover {
+  background-color: #0056b3;
+}
+
+.modal-upload .btn.close-modal {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 0.625rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.modal-upload .btn.close-modal:hover {
+  background-color: #c82333;
+}

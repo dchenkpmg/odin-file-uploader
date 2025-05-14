@@ -83,7 +83,7 @@ async function uploadFile(req, res, next) {
       return res.redirect(`/files/${req.params.id}`);
     }
     const userId = req.user.id;
-    const parentId = req.params.id || null;
+    const parentId = parseInt(req.params.id) || null;
     const fileName = req.file.originalname;
     const fileSize = req.file.size;
     const filePath = data.path;

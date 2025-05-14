@@ -1,11 +1,11 @@
-/* login.css */
+/* sign-up.css */
 
 /* General styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f9;
+  background-color: #f9f9f9;
   color: #333;
 }
 
@@ -63,18 +63,6 @@ form button {
 
 form button:hover {
   background-color: #0056b3;
-}
-
-/* Link styles */
-a {
-  color: #007bff;
-  text-decoration: none;
-  margin-top: 1rem;
-  display: inline-block;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 /* Error message styles */

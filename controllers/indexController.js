@@ -38,6 +38,7 @@ async function postSignUp(req, res, next) {
       return res.status(422).render("signup", {
         title: "Sign Up - File Storage",
         errors: errors.array(),
+        errMessages: [],
       });
     }
     const existingUser = await db.getUserByUsername(req.body.username);
